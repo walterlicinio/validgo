@@ -2,6 +2,7 @@ package validgo
 
 import "fmt"
 
+// IsInt checks if the field is an integer
 func (f *FieldValidator) IsInt() *FieldValidator {
 	if _, ok := f.fieldValue.(int); !ok {
 		f.validator.addError(fmt.Errorf("%s must be an integer", f.fieldName))
@@ -9,6 +10,7 @@ func (f *FieldValidator) IsInt() *FieldValidator {
 	return f
 }
 
+// Min checks if the field is at least the specified value
 func (f *FieldValidator) Min(min int) *FieldValidator {
 	if val, ok := f.fieldValue.(int); ok {
 		if val < min {
@@ -18,6 +20,7 @@ func (f *FieldValidator) Min(min int) *FieldValidator {
 	return f
 }
 
+// Max checks if the field is at most the specified value
 func (f *FieldValidator) Max(max int) *FieldValidator {
 	if val, ok := f.fieldValue.(int); ok {
 		if val > max {
@@ -27,6 +30,7 @@ func (f *FieldValidator) Max(max int) *FieldValidator {
 	return f
 }
 
+// IsFloat checks if the field is a float
 func (f *FieldValidator) IsFloat() *FieldValidator {
 	if _, ok := f.fieldValue.(float64); !ok {
 		f.validator.addError(fmt.Errorf("%s must be a float", f.fieldName))
@@ -34,6 +38,7 @@ func (f *FieldValidator) IsFloat() *FieldValidator {
 	return f
 }
 
+// MinFloat checks if the field is at least the specified value
 func (f *FieldValidator) MinFloat(min float64) *FieldValidator {
 	if val, ok := f.fieldValue.(float64); ok {
 		if val < min {
@@ -43,6 +48,7 @@ func (f *FieldValidator) MinFloat(min float64) *FieldValidator {
 	return f
 }
 
+// MaxFloat checks if the field is at most the specified value
 func (f *FieldValidator) MaxFloat(max float64) *FieldValidator {
 	if val, ok := f.fieldValue.(float64); ok {
 		if val > max {
@@ -52,6 +58,8 @@ func (f *FieldValidator) MaxFloat(max float64) *FieldValidator {
 	return f
 }
 
+// IsPositive checks if the field is a positive number
+// Also checks if the field is a positive integer or float
 func (f *FieldValidator) IsPositive() *FieldValidator {
 	switch v := f.fieldValue.(type) {
 	case int:

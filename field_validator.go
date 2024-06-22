@@ -13,6 +13,7 @@ type FieldValidator struct {
 	fieldValue any
 }
 
+// IsString checks if the field is a string
 func (f *FieldValidator) IsString() *FieldValidator {
 	if _, ok := f.fieldValue.(string); !ok {
 		f.validator.addError(fmt.Errorf("%s must be a string", f.fieldName))
@@ -20,6 +21,7 @@ func (f *FieldValidator) IsString() *FieldValidator {
 	return f
 }
 
+// MinLength checks if the field is at least the specified length
 func (f *FieldValidator) MinLength(length int) *FieldValidator {
 	if str, ok := f.fieldValue.(string); ok {
 		if len(str) < length {
@@ -29,6 +31,7 @@ func (f *FieldValidator) MinLength(length int) *FieldValidator {
 	return f
 }
 
+// MaxLength checks if the field is at most the specified length
 func (f *FieldValidator) MaxLength(length int) *FieldValidator {
 	if str, ok := f.fieldValue.(string); ok {
 		if len(str) > length {
@@ -38,31 +41,7 @@ func (f *FieldValidator) MaxLength(length int) *FieldValidator {
 	return f
 }
 
-func (f *FieldValidator) IsInt() *FieldValidator {
-	if _, ok := f.fieldValue.(int); !ok {
-		f.validator.addError(fmt.Errorf("%s must be an integer", f.fieldName))
-	}
-	return f
-}
-
-func (f *FieldValidator) Min(min int) *FieldValidator {
-	if val, ok := f.fieldValue.(int); ok {
-		if val < min {
-			f.validator.addError(fmt.Errorf("%s must be at least %d", f.fieldName, min))
-		}
-	}
-	return f
-}
-
-func (f *FieldValidator) Max(max int) *FieldValidator {
-	if val, ok := f.fieldValue.(int); ok {
-		if val > max {
-			f.validator.addError(fmt.Errorf("%s must be at most %d", f.fieldName, max))
-		}
-	}
-	return f
-}
-
+// IsEmail checks if the field is a valid email address
 func (f *FieldValidator) IsEmail() *FieldValidator {
 	if str, ok := f.fieldValue.(string); ok {
 		emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
@@ -73,6 +52,8 @@ func (f *FieldValidator) IsEmail() *FieldValidator {
 	return f
 }
 
+// Custom allows for custom validation logic
+// The function should return true if the validation is successful
 func (f *FieldValidator) Custom(fn func(any) bool) *FieldValidator {
 	if !fn(f.fieldValue) {
 		f.validator.addError(fmt.Errorf("%s custom validation is invalid", f.fieldName))
@@ -80,12 +61,15 @@ func (f *FieldValidator) Custom(fn func(any) bool) *FieldValidator {
 	return f
 }
 
+// Transform allows for custom transformation logic
+// The function should return the transformed value
 func (f *FieldValidator) Transform(fn func(any) any) *FieldValidator {
 	f.fieldValue = fn(f.fieldValue)
 	f.updateField()
 	return f
 }
 
+// updateField updates the field in the data structure
 func (f *FieldValidator) updateField() {
 	current := reflect.ValueOf(f.validator.data)
 	parts := strings.Split(f.fieldName, ".")
